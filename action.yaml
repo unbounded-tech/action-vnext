@@ -1,0 +1,8 @@
+name: 'vnext'
+description: 'Calculate the next version using the vnext CLI'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+outputs:
+  version:
+    description: 'Calculated version from vnext'

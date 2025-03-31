@@ -1,0 +1,56 @@
+name: Release Action-vnext
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Build the Docker image for the action
+      - name: Build Docker image (latest tag)
+        id: build-image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: Dockerfile
+          push: false
+          tags: action-vnext:latest
+
+      # Use the built image to calculate the version via vnext
+      - name: Compute Version Using vnext
+        id: compute-version
+        run: |
+          # Mount the workspace so vnext can access the Git commit history
+          VERSION=$(docker run --rm -v "${{ github.workspace }}:/workspace" -w /workspace action-vnext:latest)
+          echo "Computed version: $VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      # Create a Git tag with the computed version and push it
+      - name: Create and Push Git Tag
+        run: |
+          git tag "${{ steps.compute-version.outputs.version }}"
+          git push origin "${{ steps.compute-version.outputs.version }}"
+
+      # Build and push the Docker image with the computed version tag to GHCR
+      - name: Build and Push Docker Image with Version Tag
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository }}:${{ steps.compute-version.outputs.version }}
+
+      # Create a GitHub Release with the computed version tag
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.compute-version.outputs.version }}
