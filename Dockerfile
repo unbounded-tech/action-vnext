@@ -24,4 +24,3 @@ RUN /usr/local/bin/vnext --version
 
 # Set the default entrypoint for the action
 ENTRYPOINT ["/usr/local/bin/vnext"]
-CMD ["--help"]
