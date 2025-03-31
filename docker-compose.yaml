@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  vnext:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/workspace
+    environment:
+      - LOG_LEVEL=debug
+    working_dir: /workspace
+    # No additional command is provided, so the container will run the vnext executable as per the ENTRYPOINT.
+    command: []
