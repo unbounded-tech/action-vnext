@@ -15,7 +15,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      # Build the Docker image and load it locally so we can run it
+      # Build the Docker image and load it locally.
       - name: Build Docker image (latest tag)
         id: build-image
         uses: docker/build-push-action@v3
@@ -26,22 +26,23 @@ jobs:
           load: true
           tags: action-vnext:latest
 
-      # Run the built image to compute the version via vnext
-      - name: Compute Version Using vnext
+      # Use docker-compose to run the vnext service and compute the version.
+      - name: Compute Version Using docker-compose
         id: compute-version
         run: |
-          # Mount the workspace so vnext can access the Git commit history
-          VERSION=$(docker run --rm -v "${{ github.workspace }}:/workspace" -w /workspace action-vnext:latest)
+          # Run the vnext service via docker-compose so it mounts the current repo,
+          # allowing vnext to access the Git commit history.
+          VERSION=$(docker-compose run --rm vnext)
           echo "Computed version: $VERSION"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      # Create a Git tag using the computed version and push it
+      # Create a Git tag using the computed version and push it.
       - name: Create and Push Git Tag
         run: |
           git tag "${{ steps.compute-version.outputs.version }}"
           git push origin "${{ steps.compute-version.outputs.version }}"
 
-      # Build and push the Docker image with the version tag to GHCR
+      # Build and push the Docker image with the computed version tag to GHCR.
       - name: Build and Push Docker Image with Version Tag
         uses: docker/build-push-action@v3
         with:
@@ -50,7 +51,7 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository }}:${{ steps.compute-version.outputs.version }}
 
-      # Create a GitHub Release with the computed version tag
+      # Create a GitHub Release with the computed version tag.
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
