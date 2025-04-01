@@ -1,4 +1,4 @@
-name: 'vnext'
+name: 'harmony-vnext'
 description: 'Calculate the next version using the vnext CLI'
 runs:
   using: 'docker'
