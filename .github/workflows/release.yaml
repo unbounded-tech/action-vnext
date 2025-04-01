@@ -39,7 +39,7 @@ jobs:
       # Build the Docker image and load it locally.
       - name: Build Docker image (latest tag)
         id: build-image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: Dockerfile
@@ -65,7 +65,7 @@ jobs:
 
       - name: Build and Push Docker Image with Version Tag
         if: steps.compute-version.outputs.version != steps.get-current.outputs.current
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: Dockerfile
