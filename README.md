@@ -1,7 +1,3 @@
-Below is a sample README for **action-vnext**:
-
----
-
 # action-vnext
 
 **action-vnext** is a GitHub Action wrapper for [vnext](https://github.com/harmony-labs/vnext), a fast, Rust‑based CLI tool that calculates your next semantic version by analyzing your Git commit history based on Conventional Commit standards. It delivers the simplicity and power of semantic-release—without requiring Node.js—making it ideal for any project and CI/CD pipeline.
