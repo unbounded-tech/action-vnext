@@ -35,7 +35,7 @@ jobs:
         id: compute-version
         run: |
           # Run the vnext service via docker compose to mount the current repo.
-          docker compose run --rm vnext -e LOG_LEVEL=debug
+          docker compose run -e LOG_LEVEL=debug --rm vnext
           VERSION=$(docker compose run --rm vnext)
           echo "Computed version: $VERSION"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
