@@ -3,7 +3,10 @@ name: Release Action-vnext
 on:
   push:
     branches: [main]
-  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
 
 jobs:
   release:
@@ -46,7 +49,7 @@ jobs:
       - name: Create and Push Git Tag
         run: |
           git tag "${{ steps.compute-version.outputs.version }}"
-          git push origin "${{ steps.compute-version.outputs.version }}"
+          git push --tags
 
       # Build and push the Docker image with the computed version tag to GHCR.
       - name: Build and Push Docker Image with Version Tag
