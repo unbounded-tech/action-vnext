@@ -15,11 +15,13 @@ RUN rm /usr/local/bin/ubi
 
 RUN /usr/local/bin/vnext --version
 
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 RUN adduser -D -u 1001 github && \
     git config --global --add safe.directory /workspace && \
     git config --global --add safe.directory /github/workspace
 
 USER github
 
-# Set the default entrypoint for the action
-ENTRYPOINT ["/usr/local/bin/vnext"]
+ENTRYPOINT ["/entrypoint.sh"]
