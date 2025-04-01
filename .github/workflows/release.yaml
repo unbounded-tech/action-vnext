@@ -51,11 +51,10 @@ jobs:
       - name: Compute Next Version Using docker compose
         id: compute-version
         run: |
-          docker compose run --rm -e GITHUB_OUTPUT=$GITHUB_OUTPUT vnext
-          # docker compose run -e LOG_LEVEL=debug --rm vnext
-          # VERSION=$(docker compose run --rm vnext)
-          # echo "Computed version: $VERSION"
-          # echo "version=v$VERSION" >> $GITHUB_OUTPUT
+          docker compose run -e LOG_LEVEL=debug --rm vnext
+          VERSION=$(docker compose run --rm vnext)
+          echo "Computed version: $VERSION"
+          echo "version=v$VERSION" >> $GITHUB_OUTPUT
 
       # Only if the computed version differs from the current version.
       - name: Create and Push Git Tag

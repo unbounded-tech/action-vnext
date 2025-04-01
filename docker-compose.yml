@@ -8,3 +8,4 @@ services:
     working_dir: /workspace
     # No additional command is provided, so the container will run the vnext executable as per the ENTRYPOINT.
     command: []
+    entrypoint: ["/usr/local/bin/vnext"]
