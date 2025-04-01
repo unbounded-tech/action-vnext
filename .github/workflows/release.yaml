@@ -3,6 +3,7 @@ name: Release Action-vnext
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -17,15 +18,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+
+      # Determine the current version from Git tags matching "v*". Default to "0.0.0" if none.
+      - name: Get Current Version
+        id: get-current
+        run: |
+          CURRENT=$(git describe --tags --abbrev=0 --match "v*" 2>/dev/null || echo "0.0.0")
+          echo "Current version: $CURRENT"
+          echo "current=$CURRENT" >> $GITHUB_OUTPUT
 
       # Build the Docker image and load it locally.
       - name: Build Docker image (latest tag)
@@ -38,24 +40,24 @@ jobs:
           load: true
           tags: action-vnext:latest
 
-      # Use docker compose to run the vnext service and compute the version.
-      - name: Compute Version Using docker compose
+      # Use docker compose to run the vnext service and compute the next version.
+      - name: Compute Next Version Using docker compose
         id: compute-version
         run: |
-          # Run the vnext service via docker compose to mount the current repo.
-          docker compose run -e LOG_LEVEL=debug --rm vnext
-          VERSION=$(docker compose run --rm vnext)
-          echo "Computed version: $VERSION"
-          echo "version=v$VERSION" >> $GITHUB_OUTPUT
+          # Run the vnext service via docker compose. The current repository is mounted to /workspace.
+          NEXT=$(docker compose -f docker-compose.yaml run --rm vnext)
+          echo "Computed next version: $NEXT"
+          echo "version=$NEXT" >> $GITHUB_OUTPUT
 
-      # Create a Git tag using the computed version and push it.
+      # Only if the computed version differs from the current version.
       - name: Create and Push Git Tag
+        if: steps.compute-version.outputs.version != steps.get-current.outputs.current
         run: |
           git tag "${{ steps.compute-version.outputs.version }}"
-          git push --tags
+          git push origin "${{ steps.compute-version.outputs.version }}"
 
-      # Build and push the Docker image with the computed version tag to GHCR.
       - name: Build and Push Docker Image with Version Tag
+        if: steps.compute-version.outputs.version != steps.get-current.outputs.current
         uses: docker/build-push-action@v3
         with:
           context: .
@@ -63,8 +65,8 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository }}:${{ steps.compute-version.outputs.version }}
 
-      # Create a GitHub Release with the computed version tag.
       - name: Create GitHub Release
+        if: steps.compute-version.outputs.version != steps.get-current.outputs.current
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.compute-version.outputs.version }}
