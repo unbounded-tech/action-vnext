@@ -3,6 +3,7 @@ FROM alpine:3.18
 # Install dependencies: curl and tar
 RUN apk add --no-cache curl tar git
 RUN git config --global --add safe.directory /workspace
+RUN git config --global --add safe.directory /github/workspace
 
 # Download the ubi binary (adjust URL if needed)
 RUN curl --silent --location https://raw.githubusercontent.com/houseabsolute/ubi/master/bootstrap/bootstrap-ubi.sh | sh
