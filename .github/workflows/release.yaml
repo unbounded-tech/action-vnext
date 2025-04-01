@@ -66,7 +66,7 @@ jobs:
       - name: Create and Push Git Tag
         if: steps.gate.outputs.continue == 'true'
         run: |
-          git tag "${{ steps.next.outputs.version }}"
+          git tag "v${{ steps.next.outputs.version }}"
           git push --tags
 
       - name: Build and Push Docker Image with Version Tag
@@ -76,10 +76,10 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}:${{ steps.next.outputs.version }}
+          tags: ghcr.io/${{ github.repository }}:v${{ steps.next.outputs.version }}
 
       - name: Create GitHub Release
         if: steps.gate.outputs.continue == 'true'
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ steps.next.outputs.version }}
+          tag: v${{ steps.next.outputs.version }}
