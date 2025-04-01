@@ -26,13 +26,12 @@ jobs:
           load: true
           tags: action-vnext:latest
 
-      # Use docker-compose to run the vnext service and compute the version.
-      - name: Compute Version Using docker-compose
+      # Use docker compose to run the vnext service and compute the version.
+      - name: Compute Version Using docker compose
         id: compute-version
         run: |
-          # Run the vnext service via docker-compose so it mounts the current repo,
-          # allowing vnext to access the Git commit history.
-          VERSION=$(docker-compose run --rm vnext)
+          # Run the vnext service via docker compose to mount the current repo.
+          VERSION=$(docker compose run --rm vnext)
           echo "Computed version: $VERSION"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
