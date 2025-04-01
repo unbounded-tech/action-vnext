@@ -52,7 +52,7 @@ jobs:
           docker compose run -e LOG_LEVEL=debug --rm vnext
           VERSION=$(docker compose run --rm vnext)
           echo "Computed version: $VERSION"
-          echo "version=v$VERSION" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Gate
         id: gate
@@ -64,13 +64,13 @@ jobs:
 
       # Only if the computed version differs from the current version.
       - name: Create and Push Git Tag
-        if: steps.next.outputs.version != steps.current.outputs.current
+        if: steps.gate.outputs.continue
         run: |
           git tag "${{ steps.next.outputs.version }}"
           git push --tags
 
       - name: Build and Push Docker Image with Version Tag
-        if: steps.next.outputs.version != steps.current.outputs.current
+        if: steps.gate.outputs.continue
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -79,7 +79,7 @@ jobs:
           tags: ghcr.io/${{ github.repository }}:${{ steps.next.outputs.version }}
 
       - name: Create GitHub Release
-        if: steps.next.outputs.version != steps.current.outputs.current
+        if: steps.gate.outputs.continue
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.next.outputs.version }}
