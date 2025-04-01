@@ -40,7 +40,7 @@ jobs:
           docker compose run -e LOG_LEVEL=debug --rm vnext
           VERSION=$(docker compose run --rm vnext)
           echo "Computed version: $VERSION"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version=v$VERSION" >> $GITHUB_OUTPUT
 
       # Create a Git tag using the computed version and push it.
       - name: Create and Push Git Tag
