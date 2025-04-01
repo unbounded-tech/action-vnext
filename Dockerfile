@@ -1,4 +1,4 @@
-FROM alpine:3.18
+FROM alpine:3.21
 
 # Install dependencies: curl and tar
 RUN apk add --no-cache curl tar git
