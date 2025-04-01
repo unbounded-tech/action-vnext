@@ -6,7 +6,5 @@ services:
     volumes:
       - ./:/workspace
     working_dir: /workspace
-    environment:
-      - GIT_DISCOVERY_ACROSS_FILESYSTEM=1
     # No additional command is provided, so the container will run the vnext executable as per the ENTRYPOINT.
     command: []
