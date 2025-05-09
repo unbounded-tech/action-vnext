@@ -6,6 +6,11 @@ services:
     volumes:
       - ./:/workspace
     working_dir: /workspace
-    # No additional command is provided, so the container will run the vnext executable as per the ENTRYPOINT.
+    environment:
+      LOG_LEVEL: debug
+      GIT_DISCOVERY_ACROSS_FILESYSTEM: 1
+      # Optional: Pass additional arguments to vnext
+      # INPUT_ARGS: '--changelog'
+    # Use the entrypoint.sh script to handle optional arguments
+    entrypoint: ["/entrypoint.sh"]
     command: []
-    entrypoint: ["/usr/local/bin/vnext"]

@@ -16,8 +16,25 @@ I used to use semantic‑release in Node.js and was spoiled by its automated ver
   - **No-Op:** Ignores commits that don’t require a version bump.
 - **Language‑Agnostic:**  
   No Node.js, npm, or package.json required—just the Git history.
-- **Simplicity:**  
+- **Simplicity:**
   Packaged in a Docker container that mounts your repository so vnext can compute the next version effortlessly.
+
+## Optional Arguments
+
+The action supports passing optional arguments to the underlying `vnext` CLI tool:
+
+- **--changelog**: Generate a changelog based on commit messages.
+- Any other flags supported by the `vnext` CLI tool.
+
+To use these optional arguments, provide them using the `args` input parameter:
+
+```yaml
+- name: Calculate Next Version
+  id: version
+  uses: harmony-labs/action-vnext@latest
+  with:
+    args: '--changelog'
+```
 
 ## Usage
 
@@ -38,6 +55,9 @@ jobs:
       - name: Calculate Next Version
         id: version
         uses: harmony-labs/action-vnext@latest
+        # Optional: Pass additional arguments to vnext
+        # with:
+        #   args: '--changelog'
 
       - name: Display Computed Version
         run: echo "Next version is: ${{ steps.version.outputs.version }}"
@@ -67,6 +87,9 @@ jobs:
       - name: Calculate Next Version
         id: version
         uses: harmony-labs/action-vnext@latest
+        # Optional: Pass additional arguments to vnext
+        # with:
+        #   args: '--changelog'
 
       - name: Compare Versions and Act
         if: steps.version.outputs.version != steps.get-current.outputs.current
@@ -95,16 +118,28 @@ services:
     environment:
       LOG_LEVEL: debug
       GIT_DISCOVERY_ACROSS_FILESYSTEM: 1
+      # Optional: Pass additional arguments to vnext
+      # INPUT_ARGS: '--changelog'
+    entrypoint: ["/entrypoint.sh"]
     command: []
 ```
 
 **To test locally:**
 
-1. Ensure you’re in a Git repository (vnext relies on the commit history).
+1. Ensure you're in a Git repository (vnext relies on the commit history).
 2. Run the following command in your terminal:
 
    ```bash
    docker compose run --rm vnext
+   ```
+
+   To pass optional arguments, you can either:
+   
+   - Uncomment the `INPUT_ARGS` line in the docker-compose.yml file, or
+   - Set the environment variable directly in the command:
+   
+   ```bash
+   docker compose run --rm -e INPUT_ARGS="--changelog" vnext
    ```
 
 This command builds the image (if not already built) and runs the vnext service, printing the computed version to your terminal.
