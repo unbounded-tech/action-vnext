@@ -46,17 +46,9 @@ jobs:
           CURRENT=${CURRENT#v}
           echo "version=$CURRENT" >> $GITHUB_OUTPUT
 
-      - name: Compute 
-        run: |
-          docker compose run -e LOG_LEVEL=debug --rm vnext
-          VERSION=$(docker compose run --rm vnext)
-          echo "Computed version: $VERSION"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
       - name: Compute Next Version
         id: next
         run: |
-          docker compose run -e LOG_LEVEL=debug --rm vnext
           VERSION=$(docker compose run --rm vnext)
           echo "Computed version: $VERSION"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
@@ -69,11 +61,35 @@ jobs:
           echo "Should release?: ${{ steps.current.outputs.version != steps.next.outputs.version }}"
           echo "continue=${{ steps.current.outputs.version != steps.next.outputs.version }}" >> $GITHUB_OUTPUT
 
+      # Generate changelog if the gate passes
+      - name: Generate Changelog
+        if: steps.gate.outputs.continue == 'true'
+        id: changelog
+        run: |
+          CHANGELOG=$(docker compose run -e INPUT_ARGS="--changelog" --rm vnext)
+          echo "changelog=$CHANGELOG" >> $GITHUB_OUTPUT
+
+      # Save changelog to CHANGELOG.md if the gate passes
+      - name: Save Changelog and Commit
+        if: steps.gate.outputs.continue == 'true'
+        run: |
+          echo "Saving changelog to CHANGELOG.md"
+          echo "${{ steps.changelog.outputs.changelog }}" > CHANGELOG.md
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add CHANGELOG.md
+          git commit -m "docs: update CHANGELOG.md for v${{ steps.next.outputs.version }}"
+
       # Only if the computed version differs from the current version.
-      - name: Create and Push Git Tag
+      - name: Create Git Tag
         if: steps.gate.outputs.continue == 'true'
         run: |
           git tag "v${{ steps.next.outputs.version }}"
+      
+      # Push the tag after committing the changelog
+      - name: Push Git Tag
+        if: steps.gate.outputs.continue == 'true'
+        run: |
           git push --tags
 
       - name: Build and Push Docker Image with Version Tag
@@ -90,3 +106,4 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: v${{ steps.next.outputs.version }}
+          bodyFile: CHANGELOG.md
