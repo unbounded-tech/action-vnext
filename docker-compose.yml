@@ -6,11 +6,5 @@ services:
     volumes:
       - ./:/workspace
     working_dir: /workspace
-    environment:
-      LOG_LEVEL: info
-      GIT_DISCOVERY_ACROSS_FILESYSTEM: 1
-      # Optional: Pass additional arguments to vnext
-      # INPUT_ARGS: '--changelog'
-    # Use the entrypoint.sh script to handle optional arguments
-    entrypoint: ["/entrypoint.sh"]
     command: []
+    entrypoint: ["/usr/local/bin/vnext"]
