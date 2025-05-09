@@ -49,6 +49,7 @@ jobs:
       - name: Compute Next Version
         id: next
         run: |
+          docker compose run -e LOG_LEVEL=debug --rm vnext
           VERSION=$(docker compose run --rm vnext)
           echo "Computed version: $VERSION"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
