@@ -9,6 +9,12 @@ if [ "$LOG_LEVEL" = "debug" ]; then
   echo "Running: vnext $EXTRA_ARGS"
   vnext $EXTRA_ARGS
 else
-  version=$(vnext $EXTRA_ARGS)
-  echo "version=$version" >> "$GITHUB_OUTPUT"
+  result=$(vnext $EXTRA_ARGS)
+  
+  # Check if the --changelog flag is present in the arguments
+  if echo "$EXTRA_ARGS" | grep -q -- "--changelog"; then
+    echo "changelog=$result" >> "$GITHUB_OUTPUT"
+  else
+    echo "version=$result" >> "$GITHUB_OUTPUT"
+  fi
 fi

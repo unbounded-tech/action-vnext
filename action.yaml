@@ -11,3 +11,5 @@ runs:
 outputs:
   version:
     description: 'Calculated version from vnext'
+  changelog:
+    description: 'Generated changelog when --changelog flag is used'

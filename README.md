@@ -26,14 +26,30 @@ The action supports passing optional arguments to the underlying `vnext` CLI too
 - **--changelog**: Generate a changelog based on commit messages.
 - Any other flags supported by the `vnext` CLI tool.
 
+The typical workflow involves two separate steps:
+
+1. First, calculate the next version (without any flags)
+2. Then, generate a changelog in a separate step (with the `--changelog` flag)
+
 To use these optional arguments, provide them using the `args` input parameter:
 
 ```yaml
 - name: Calculate Next Version
   id: version
   uses: harmony-labs/action-vnext@latest
+  # No args here - just get the version
+
+- name: Generate Changelog
+  if: steps.version.outputs.version != steps.get-current.outputs.current
+  uses: harmony-labs/action-vnext@latest
   with:
     args: '--changelog'
+  
+- name: Save Changelog
+  if: steps.version.outputs.version != steps.get-current.outputs.current
+  run: |
+    echo "Saving changelog to CHANGELOG.md"
+    # Save the changelog output to CHANGELOG.md
 ```
 
 ## Usage
@@ -55,12 +71,22 @@ jobs:
       - name: Calculate Next Version
         id: version
         uses: harmony-labs/action-vnext@latest
-        # Optional: Pass additional arguments to vnext
-        # with:
-        #   args: '--changelog'
+        # No args here - just get the version
 
       - name: Display Computed Version
         run: echo "Next version is: ${{ steps.version.outputs.version }}"
+        
+      # Optional: Generate and save changelog in separate steps
+      - name: Generate Changelog
+        id: changelog
+        uses: harmony-labs/action-vnext@latest
+        with:
+          args: '--changelog'
+        
+      - name: Save Changelog
+        run: |
+          echo "Saving changelog to CHANGELOG.md"
+          echo "${{ steps.changelog.outputs.changelog }}" > CHANGELOG.md
 ```
 
 ### Conditional Release Example: Comparing to the Current Version
@@ -87,20 +113,34 @@ jobs:
       - name: Calculate Next Version
         id: version
         uses: harmony-labs/action-vnext@latest
-        # Optional: Pass additional arguments to vnext
-        # with:
-        #   args: '--changelog'
+        # No args here - just get the version
 
       - name: Compare Versions and Act
         if: steps.version.outputs.version != steps.get-current.outputs.current
         run: |
           echo "There is a new version"
+          
+      # Optional: Generate and save changelog if there's a new version
+      - name: Generate Changelog
+        if: steps.version.outputs.version != steps.get-current.outputs.current
+        id: changelog
+        uses: harmony-labs/action-vnext@latest
+        with:
+          args: '--changelog'
+        
+      - name: Save Changelog
+        if: steps.version.outputs.version != steps.get-current.outputs.current
+        run: |
+          echo "Saving changelog to CHANGELOG.md"
+          echo "${{ steps.changelog.outputs.changelog }}" > CHANGELOG.md
 ```
 
 In this example:
 - The **Get Current Version** step uses `git describe` with the `--match "v*"` flag to consider only tags starting with `v` (defaulting to `0.0.0` if none exist).
 - The **Calculate Next Version** step runs the action to determine the next version based on your commit history.
 - The **Compare Versions and Act** step then checks whether the computed version differs from the current version. If they differ, the pipeline proceeds with tagging and releasing; otherwise, it skips those steps.
+- The **Generate Changelog** step runs the action again with the `--changelog` flag to generate a changelog based on the commit history.
+- The **Save Changelog** step saves the generated changelog to a file (CHANGELOG.md).
 
 ### Using Docker Compose for Local Testing
 
