@@ -1,8 +1,15 @@
 name: 'harmony-vnext'
 description: 'Calculate the next version using the vnext CLI'
+inputs:
+  args:
+    description: 'Optional flags to pass to vnext (e.g. `--changelog`)'
+    required: false
+    default: ''
 runs:
   using: 'docker'
   image: 'Dockerfile'
 outputs:
   version:
     description: 'Calculated version from vnext'
+  changelog:
+    description: 'Generated changelog when --changelog flag is used'
