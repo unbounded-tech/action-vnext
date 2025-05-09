@@ -13,7 +13,11 @@ else
   
   # Check if the --changelog flag is present in the arguments
   if echo "$EXTRA_ARGS" | grep -q -- "--changelog"; then
-    echo "changelog=$result" >> "$GITHUB_OUTPUT"
+    {
+      echo "changelog<<EOF"
+      echo "$result"
+      echo "EOF"
+    } >> "$GITHUB_OUTPUT"
   else
     echo "version=$result" >> "$GITHUB_OUTPUT"
   fi
