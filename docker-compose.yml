@@ -8,3 +8,13 @@ services:
     working_dir: /workspace
     command: []
     entrypoint: ["/usr/local/bin/vnext"]
+  
+  changelog:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/workspace
+    working_dir: /workspace
+    command: []
+    entrypoint: ["/usr/local/bin/vnext", "--changelog"]
