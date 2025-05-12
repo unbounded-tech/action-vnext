@@ -73,9 +73,9 @@ jobs:
         id: changelog
         run: |
           CHANGELOG=$(docker compose run --rm changelog)
-          @echo "$CHANGELOG" > CHANGELOG.md
-          @echo "Changelog generated successfully."
-          @cat CHANGELOG.md
+          echo "$CHANGELOG" > CHANGELOG.md
+          echo "Changelog generated successfully."
+          cat CHANGELOG.md
 
       # Save changelog to CHANGELOG.md if the gate passes
       - name: Save Changelog and Commit
