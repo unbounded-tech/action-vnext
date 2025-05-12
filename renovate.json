@@ -10,10 +10,10 @@
         "Dockerfile"
       ],
       "matchStrings": [
-        "RUN ubi --project harmony-labs/vnext --tag (?<currentValue>v\\d+\\.\\d+\\.\\d+) --in /usr/local/bin/"
+        "RUN ubi --project (?<depName>.*) --tag (?<currentValue>.*?) --in /usr/local/bin/"
       ],
       "datasourceTemplate": "github-releases",
-      "registryUrlTemplate": "https://github.com/harmony-labs/vnext/releases"
+      "registryUrlTemplate": "https://github.com"
     }
   ]
 }
