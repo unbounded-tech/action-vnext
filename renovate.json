@@ -2,5 +2,18 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": [
+        "Dockerfile"
+      ],
+      "matchStrings": [
+        "RUN ubi --project harmony-labs/vnext --tag (?<currentValue>v\\d+\\.\\d+\\.\\d+) --in /usr/local/bin/"
+      ],
+      "datasourceTemplate": "github-releases",
+      "registryUrlTemplate": "https://github.com/harmony-labs/vnext/releases"
+    }
   ]
 }
