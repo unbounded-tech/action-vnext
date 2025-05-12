@@ -72,7 +72,7 @@ jobs:
         if: steps.gate.outputs.continue == 'true'
         id: changelog
         run: |
-          CHANGELOG=$(docker compose run -e INPUT_ARGS="--changelog" --rm changelog)
+          CHANGELOG=$(docker compose run --rm changelog)
           echo "changelog=$CHANGELOG" >> $GITHUB_OUTPUT
 
       # Save changelog to CHANGELOG.md if the gate passes
