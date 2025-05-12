@@ -73,15 +73,14 @@ jobs:
         id: changelog
         run: |
           CHANGELOG=$(docker compose run --rm changelog)
-          echo "$CHANGELOG"
-          echo "changelog=$CHANGELOG" >> $GITHUB_OUTPUT
+          @echo "$CHANGELOG" > CHANGELOG.md
+          @echo "Changelog generated successfully."
+          @cat CHANGELOG.md
 
       # Save changelog to CHANGELOG.md if the gate passes
       - name: Save Changelog and Commit
         if: steps.gate.outputs.continue == 'true'
         run: |
-          echo "Saving changelog to CHANGELOG.md"
-          echo "${{ steps.changelog.outputs.changelog }}" > CHANGELOG.md
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add CHANGELOG.md
