@@ -55,7 +55,7 @@ jobs:
         id: next
         run: |
           docker compose run -e LOG_LEVEL=debug --rm vnext
-          VERSION=$(docker compose run --rm vnext)
+          VERSION=$(docker compose run --rm --quiet-pull vnext 2>/dev/null)
           echo "Computed version: $VERSION"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
@@ -72,7 +72,7 @@ jobs:
         if: steps.gate.outputs.continue == 'true'
         id: changelog
         run: |
-          CHANGELOG=$(docker compose run --rm changelog)
+          CHANGELOG=$(docker compose run --rm --quiet-pull changelog 2>/dev/null)
           echo "$CHANGELOG" > CHANGELOG.md
           echo "Changelog generated successfully."
           cat CHANGELOG.md
