@@ -6,8 +6,8 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": [
-        "Dockerfile"
+      "managerFilePatterns": [
+        "/Dockerfile/"
       ],
       "matchStrings": [
         "RUN ubi --project (?<depName>.*) --tag (?<currentValue>.*?) --in /usr/local/bin/"
