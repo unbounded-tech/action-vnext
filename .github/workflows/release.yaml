@@ -73,6 +73,7 @@ jobs:
         id: changelog
         run: |
           CHANGELOG=$(docker compose run --rm changelog)
+          echo "$CHANGELOG"
           echo "changelog=$CHANGELOG" >> $GITHUB_OUTPUT
 
       # Save changelog to CHANGELOG.md if the gate passes
