@@ -1,6 +1,6 @@
 # action-vnext
 
-**action-vnext** is a GitHub Action wrapper for [vnext](https://github.com/harmony-labs/vnext), a fast, Rust‑based CLI tool that calculates your next semantic version by analyzing your Git commit history using Conventional Commit standards. It brings the simplicity of semantic‑release without requiring Node.js—making it ideal for any project and CI/CD pipeline.
+**action-vnext** is a GitHub Action wrapper for [vnext](https://github.com/unbounded-tech/vnext), a fast, Rust‑based CLI tool that calculates your next semantic version by analyzing your Git commit history using Conventional Commit standards. It brings the simplicity of semantic‑release without requiring Node.js—making it ideal for any project and CI/CD pipeline.
 
 ## Motivation
 
@@ -36,12 +36,12 @@ To use these optional arguments, provide them using the `args` input parameter:
 ```yaml
 - name: Calculate Next Version
   id: version
-  uses: harmony-labs/action-vnext@latest
+  uses: unbounded-tech/action-vnext@latest
   # No args here - just get the version
 
 - name: Generate Changelog
   if: steps.version.outputs.version != steps.get-current.outputs.current
-  uses: harmony-labs/action-vnext@latest
+  uses: unbounded-tech/action-vnext@latest
   with:
     args: '--changelog'
   
@@ -70,7 +70,7 @@ jobs:
 
       - name: Calculate Next Version
         id: version
-        uses: harmony-labs/action-vnext@latest
+        uses: unbounded-tech/action-vnext@latest
         # No args here - just get the version
 
       - name: Display Computed Version
@@ -79,7 +79,7 @@ jobs:
       # Optional: Generate and save changelog in separate steps
       - name: Generate Changelog
         id: changelog
-        uses: harmony-labs/action-vnext@latest
+        uses: unbounded-tech/action-vnext@latest
         with:
           args: '--changelog'
         
@@ -112,7 +112,7 @@ jobs:
 
       - name: Calculate Next Version
         id: version
-        uses: harmony-labs/action-vnext@latest
+        uses: unbounded-tech/action-vnext@latest
         # No args here - just get the version
 
       - name: Compare Versions and Act
@@ -124,7 +124,7 @@ jobs:
       - name: Generate Changelog
         if: steps.version.outputs.version != steps.get-current.outputs.current
         id: changelog
-        uses: harmony-labs/action-vnext@latest
+        uses: unbounded-tech/action-vnext@latest
         with:
           args: '--changelog'
         
@@ -188,7 +188,7 @@ This command builds the image (if not already built) and runs the vnext service,
 
 ### Using GitHub Releases
 
-This action is automatically built and released via GitHub Actions. Use it in your workflows by referencing the appropriate tag (e.g., `harmony-labs/action-vnext@latest`).
+This action is automatically built and released via GitHub Actions. Use it in your workflows by referencing the appropriate tag (e.g., `unbounded-tech/action-vnext@latest`).
 
 ### Building from Source
 
