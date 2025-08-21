@@ -8,7 +8,7 @@ RUN curl --silent --location https://raw.githubusercontent.com/houseabsolute/ubi
 RUN ubi --version
 
 # Use ubi to install the pre-built vnext executable
-RUN ubi --project unbounded-tech/vnext --tag v1.13.0 --in /usr/local/bin/
+RUN ubi --project unbounded-tech/vnext --tag v1.14.1 --in /usr/local/bin/
 
 # Clean up: remove ubi and the temporary directory
 RUN rm /usr/local/bin/ubi
