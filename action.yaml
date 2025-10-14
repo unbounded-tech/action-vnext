@@ -1,4 +1,4 @@
-name: 'harmony-vnext'
+name: 'vnext'
 description: 'Calculate the next version using the vnext CLI'
 inputs:
   args:
